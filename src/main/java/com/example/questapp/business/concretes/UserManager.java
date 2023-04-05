@@ -14,40 +14,40 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 
-public class UserManager implements UserService{
-	
+public class UserManager implements UserService {
+
 	private UserRepository userRepository;
-	
+
 	@Override
 	public List<User> getAll() {
-		
+
 		return userRepository.findAll();
 	}
 
 	@Override
 	public User getById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return userRepository.findById(id).orElseThrow();
 	}
 
 	@Override
 	public void add(User user) {
 		this.userRepository.save(user);
-		
+
 	}
 
 	@Override
 	public void update(User user) {
-		
-		
+
+		this.userRepository.save(user);
+
 	}
 
 	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-		
+
+		this.userRepository.deleteById(id);
+
 	}
-	
-	
-	
+
 }

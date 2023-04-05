@@ -2,7 +2,6 @@ package com.example.questapp.webApi.controllers;
 
 import java.util.List;
 
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,42 +12,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.questapp.business.abstracts.UserService;
-
 import com.example.questapp.entities.User;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/users")
-@Data
+
 @AllArgsConstructor
-@NoArgsConstructor
+
 public class UserController {
 	private UserService userService;
 	
 	@GetMapping
 	public List<User> getAllUsers(){
-		return this.userService.getAll();
+		return userService.getAll();
 	}
 	
-	@GetMapping("/{userId}")
-	public User getOneUser(@PathVariable Long UserId) {
-		return userService.getById(UserId);
+	@GetMapping("/{id}")
+	public User getOneUser(@PathVariable Long id) {
+		return userService.getById(id);
 	}
 	
 	@PostMapping
-	public void add(@RequestBody User user) {
-		this.userService.add(user);
+	public void addUser(@RequestBody User user) {
+		userService.add(user);
 	}
 	
-	@PutMapping("/userId")
-	public User updateOneUser(@PathVariable Long userId, @RequestBody User newUser) {
+	@PutMapping()
+	public void updatUser(@RequestBody User newUser) {
 			
-			
-			return newUser;
-			
+			userService.update(newUser);
 		
 	}
 	
