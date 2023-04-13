@@ -24,5 +24,7 @@ public class User {
 	private String userName;
 	@Column(name = "user_password")
 	private String password;
+	@Column(name="user_avatar")
+	int avatar;
 	
 }

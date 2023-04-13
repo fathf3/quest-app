@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.questapp.business.abstracts.CommentService;
+import com.example.questapp.business.requests.CreateCommentRequest;
+import com.example.questapp.core.utilities.mappers.ModelMapperService;
 import com.example.questapp.dataAccess.abstracts.CommentRepository;
 import com.example.questapp.entities.Comment;
 
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class CommentManager implements CommentService {
 
 	private CommentRepository commentRepository;
+	private ModelMapperService modelMapperService;
 		
 	@Override
 	public List<Comment> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId) {
@@ -40,6 +43,12 @@ public class CommentManager implements CommentService {
 	@Override
 	public Comment getOneCommentById(Long commentId) {
 		return commentRepository.findById(commentId).orElse(null);
+	}
+
+	@Override
+	public Comment createOneComment(CreateCommentRequest createCommentRequest) {
+		Comment comment = this.modelMapperService.forRequest().map(createCommentRequest, Comment.class);
+		return comment;
 	}
 
 }

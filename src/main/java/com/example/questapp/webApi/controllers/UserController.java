@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.questapp.business.abstracts.UserService;
+import com.example.questapp.business.requests.CreateUserRequest;
 import com.example.questapp.entities.User;
 
 import lombok.AllArgsConstructor;
@@ -35,8 +36,8 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public void addUser(@RequestBody User user) {
-		userService.add(user);
+	public void addUser(@RequestBody CreateUserRequest createUserRequest) {
+		userService.add(createUserRequest);
 	}
 	
 	@PutMapping()
