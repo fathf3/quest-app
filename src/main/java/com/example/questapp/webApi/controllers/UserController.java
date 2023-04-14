@@ -23,33 +23,33 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 
 public class UserController {
-	private UserService userService;
+	private final UserService userService;
 	
 	@GetMapping
 	public List<User> getAllUsers(){
-		return userService.getAll();
+		return userService.getAllUsers();
 	}
 	
 	@GetMapping("/{id}")
 	public User getOneUser(@PathVariable Long id) {
-		return userService.getById(id);
+		return userService.getOneUserById(id);
 	}
 	
 	@PostMapping
 	public void addUser(@RequestBody CreateUserRequest createUserRequest) {
-		userService.add(createUserRequest);
+		userService.createOneUser(createUserRequest);
 	}
 	
 	@PutMapping()
 	public void updatUser(@RequestBody User newUser) {
 			
-			userService.update(newUser);
+			userService.updateOneUserById(newUser);
 		
 	}
 	
 	@DeleteMapping("/{userId}")
 	public void deleteOneUser(@PathVariable  Long userId) {
-		userService.delete(userId);
+		userService.deleteOneUserById(userId);
 	}
 	
 	

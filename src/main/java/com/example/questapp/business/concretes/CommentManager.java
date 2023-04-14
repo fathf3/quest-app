@@ -6,22 +6,26 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.questapp.business.abstracts.CommentService;
+import com.example.questapp.business.abstracts.PostService;
+import com.example.questapp.business.abstracts.UserService;
 import com.example.questapp.business.requests.CreateCommentRequest;
-import com.example.questapp.core.utilities.mappers.ModelMapperService;
+import com.example.questapp.business.requests.UpdateCommentRequest;
 import com.example.questapp.dataAccess.abstracts.CommentRepository;
 import com.example.questapp.entities.Comment;
+import com.example.questapp.entities.Post;
+import com.example.questapp.entities.User;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
+
 
 public class CommentManager implements CommentService {
 
-	private CommentRepository commentRepository;
-	private ModelMapperService modelMapperService;
+	private final CommentRepository commentRepository;
+	private final UserService userService;
+	private final PostService postService;
 		
 	@Override
 	public List<Comment> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId) {
@@ -47,8 +51,35 @@ public class CommentManager implements CommentService {
 
 	@Override
 	public Comment createOneComment(CreateCommentRequest createCommentRequest) {
-		Comment comment = this.modelMapperService.forRequest().map(createCommentRequest, Comment.class);
-		return comment;
+		User user = userService.getOneUserById(createCommentRequest.getUserId());
+		Post post = postService.getOnePostById(createCommentRequest.getPostId());
+		if(user != null && post != null) {
+			Comment commentToSave = new Comment();
+			commentToSave.setId(createCommentRequest.getId());
+			commentToSave.setText(createCommentRequest.getText());
+			commentToSave.setUser(user);
+			commentToSave.setPost(post);
+			return commentRepository.save(commentToSave);
+		}else
+			return null;
+	}
+
+	@Override
+	public Comment updateOneCommentById(Long commentId, UpdateCommentRequest updateCommentRequest) {
+		Optional<Comment> comment = commentRepository.findById(commentId);
+		if(comment.isPresent()) {
+			Comment commentToUpdate = comment.get();
+			commentToUpdate.setText(updateCommentRequest.getText());
+			
+			return commentRepository.save(commentToUpdate);
+		}else
+			return null;
+	}
+
+	@Override
+	public void deleteOneCommentById(Long commentId) {
+		
+		commentRepository.deleteById(commentId);
 	}
 
 }

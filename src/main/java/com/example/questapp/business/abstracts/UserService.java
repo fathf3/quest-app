@@ -6,10 +6,10 @@ import com.example.questapp.business.requests.CreateUserRequest;
 import com.example.questapp.entities.User;
 
 public interface UserService {
-	List<User> getAll();
-	User getById(Long id);
-	void add(CreateUserRequest createUserRequest);
-	void update(User user);
-	void delete(Long id);
+	List<User> getAllUsers();
+	User getOneUserById(Long id);
+	void createOneUser(CreateUserRequest createUserRequest);
+	void updateOneUserById(User user);
+	void deleteOneUserById(Long id);
 	
 }

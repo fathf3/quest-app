@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.questapp.business.requests.CreateCommentRequest;
+import com.example.questapp.business.requests.UpdateCommentRequest;
 import com.example.questapp.entities.Comment;
 
 
@@ -15,6 +16,10 @@ public interface CommentService {
 	Comment getOneCommentById(Long commentId);
 
 	Comment createOneComment(CreateCommentRequest createCommentRequest);
+
+	Comment updateOneCommentById(Long commentId, UpdateCommentRequest updateCommentRequest);
+
+	void deleteOneCommentById(Long commentId);
 	
 	
 	

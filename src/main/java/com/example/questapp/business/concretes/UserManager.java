@@ -22,19 +22,19 @@ public class UserManager implements UserService {
 	private ModelMapperService modelMapperService;
 
 	@Override
-	public List<User> getAll() {
+	public List<User> getAllUsers() {
 
 		return userRepository.findAll();
 	}
 
 	@Override
-	public User getById(Long id) {
+	public User getOneUserById(Long id) {
 
 		return userRepository.findById(id).orElseThrow();
 	}
 
 	@Override
-	public void add(CreateUserRequest createUserRequest) {
+	public void createOneUser(CreateUserRequest createUserRequest) {
 		
 		User user = this.modelMapperService.forRequest().map(createUserRequest, User.class);
 		this.userRepository.save(user);
@@ -42,14 +42,14 @@ public class UserManager implements UserService {
 	}
 
 	@Override
-	public void update(User user) {
+	public void updateOneUserById(User user) {
 
 		this.userRepository.save(user);
 
 	}
 
 	@Override
-	public void delete(Long id) {
+	public void deleteOneUserById(Long id) {
 
 		this.userRepository.deleteById(id);
 
