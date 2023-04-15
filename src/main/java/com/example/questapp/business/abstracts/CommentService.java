@@ -5,13 +5,14 @@ import java.util.Optional;
 
 import com.example.questapp.business.requests.CreateCommentRequest;
 import com.example.questapp.business.requests.UpdateCommentRequest;
+import com.example.questapp.business.responses.GetAllCommentResponse;
 import com.example.questapp.entities.Comment;
 
 
 
 public interface CommentService {
 
-	List<Comment> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId);
+	List<GetAllCommentResponse> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId);
 
 	Comment getOneCommentById(Long commentId);
 
@@ -20,6 +21,10 @@ public interface CommentService {
 	Comment updateOneCommentById(Long commentId, UpdateCommentRequest updateCommentRequest);
 
 	void deleteOneCommentById(Long commentId);
+
+	
+
+
 	
 	
 	

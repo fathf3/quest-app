@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.questapp.business.abstracts.UserService;
 import com.example.questapp.business.requests.CreateUserRequest;
-import com.example.questapp.core.utilities.mappers.ModelMapperService;
 import com.example.questapp.dataAccess.abstracts.UserRepository;
 import com.example.questapp.entities.User;
 
@@ -19,7 +18,7 @@ import lombok.AllArgsConstructor;
 public class UserManager implements UserService {
 
 	private UserRepository userRepository;
-	private ModelMapperService modelMapperService;
+	
 
 	@Override
 	public List<User> getAllUsers() {
@@ -36,7 +35,12 @@ public class UserManager implements UserService {
 	@Override
 	public void createOneUser(CreateUserRequest createUserRequest) {
 		
-		User user = this.modelMapperService.forRequest().map(createUserRequest, User.class);
+		User user = new User();
+		user.setId(createUserRequest.getId());
+		user.setPassword(createUserRequest.getPassword());
+		user.setUserName(createUserRequest.getUserName());
+		user.setAvatar(1);
+		
 		this.userRepository.save(user);
 
 	}

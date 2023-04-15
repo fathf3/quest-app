@@ -2,7 +2,6 @@ package com.example.questapp.business.responses;
 
 import com.example.questapp.entities.Like;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

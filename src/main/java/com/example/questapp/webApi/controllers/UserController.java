@@ -25,14 +25,18 @@ import lombok.AllArgsConstructor;
 public class UserController {
 	private final UserService userService;
 	
+	
 	@GetMapping
 	public List<User> getAllUsers(){
 		return userService.getAllUsers();
 	}
 	
-	@GetMapping("/{id}")
-	public User getOneUser(@PathVariable Long id) {
-		return userService.getOneUserById(id);
+	
+	
+	
+	@GetMapping("/{userId}")
+	public User getOneUser(@PathVariable Long userId) {
+		return userService.getOneUserById(userId);
 	}
 	
 	@PostMapping

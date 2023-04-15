@@ -1,7 +1,7 @@
 package com.example.questapp.dataAccess.abstracts;
 
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

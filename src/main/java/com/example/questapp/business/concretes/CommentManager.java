@@ -2,6 +2,7 @@ package com.example.questapp.business.concretes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import com.example.questapp.business.abstracts.PostService;
 import com.example.questapp.business.abstracts.UserService;
 import com.example.questapp.business.requests.CreateCommentRequest;
 import com.example.questapp.business.requests.UpdateCommentRequest;
+import com.example.questapp.business.responses.GetAllCommentResponse;
 import com.example.questapp.dataAccess.abstracts.CommentRepository;
 import com.example.questapp.entities.Comment;
 import com.example.questapp.entities.Post;
@@ -28,19 +30,25 @@ public class CommentManager implements CommentService {
 	private final PostService postService;
 		
 	@Override
-	public List<Comment> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId) {
+	public List<GetAllCommentResponse> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId) {
 		
-		if(userId.isPresent() && postId.isPresent()) 
-			return commentRepository.findByUserIdAndPostId(userId.get(), postId.get());
+		List<Comment> comments;
 		
+		if(userId.isPresent() && postId.isPresent())
+			comments = commentRepository.findByUserIdAndPostId(userId.get(),postId.get());
+
 		else if(userId.isPresent()) 
-			return commentRepository.findByUserId(userId.get());
+			comments = commentRepository.findByUserId(userId.get());
 		
 		else if(postId.isPresent()) 
-			return commentRepository.findByPostId(postId.get());
+			comments = commentRepository.findByPostId(postId.get());
 		
 		else
-			return commentRepository.findAll();
+			comments = commentRepository.findAll();
+			
+		
+		return comments.stream().map(comment -> new GetAllCommentResponse(comment))
+					.collect(Collectors.toList());
 		
 	}
 
@@ -81,5 +89,9 @@ public class CommentManager implements CommentService {
 		
 		commentRepository.deleteById(commentId);
 	}
+
+	
+
+	
 
 }

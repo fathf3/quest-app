@@ -21,7 +21,7 @@ import com.example.questapp.entities.Post;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping(name = "/posts")
+@RequestMapping("/posts")
 
 @AllArgsConstructor
 public class PostController {
@@ -30,7 +30,7 @@ public class PostController {
 	
 	@GetMapping
 	public List<Post> getAllPosts(@RequestParam Optional<Long> userId){
-		// @RequestParam -> gelen degerleri Optional<Long> userId'ye atar
+	
 		
 		return postService.getAllPosts(userId);
 	}

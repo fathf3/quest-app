@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.questapp.business.abstracts.LikeService;
@@ -17,23 +16,20 @@ import com.example.questapp.business.requests.CreateLikeRequest;
 import com.example.questapp.business.responses.GetAllLikeResponse;
 import com.example.questapp.entities.Like;
 
-import lombok.AllArgsConstructor;
-
 @RestController
-@RequestMapping(name = "/likes")
-@AllArgsConstructor
+@RequestMapping("/likies")
 public class LikeController {
-
+	
 	private final LikeService likeService;
-
-	@GetMapping
-	public List<GetAllLikeResponse> getAllLikes(@RequestParam Optional<Long> userId, @RequestParam Optional<Long> postId) {
-		return likeService.getAllLikesWithParam(userId, postId);
+	
+	public LikeController(LikeService likeService) {
+		this.likeService = likeService;
 	}
 	
-	@PostMapping
-	public Like createOneLike(@RequestBody CreateLikeRequest request) {
-		return likeService.createOneLike(request);
+	@GetMapping
+	public List<GetAllLikeResponse> getAllLikesWithParam(Optional<Long> userId, Optional<Long> postId){
+		return likeService.getAllLikesWithParam(userId, postId);
+		
 	}
 	
 	@GetMapping("/{likeId}")
@@ -41,10 +37,19 @@ public class LikeController {
 		return likeService.getOneLikeById(likeId);
 	}
 	
+	
+	@PostMapping
+	public Like createOneLike(@RequestBody CreateLikeRequest createLikeRequest) {
+		return likeService.createOneLike(createLikeRequest);
+	}
+	
 	@DeleteMapping("/{likeId}")
 	public void deleteOneLike(@PathVariable Long likeId) {
 		likeService.deleteOneLikeById(likeId);
 	}
+	
+	
+	
 	
 	
 	

@@ -30,7 +30,7 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Lob
+	
 	@Column(name = "text", columnDefinition = "text")
 	private String text;
 	
