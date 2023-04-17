@@ -3,38 +3,64 @@ import "./Post.scss";
 
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-
+import { makeStyles, styled } from "@mui/styles";
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
-
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Avatar } from '@mui/material';
+import { red } from '@mui/material/colors';
+import { Link } from 'react-router-dom';
 
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: 800,
+    textAlign : "left",
+    margin : 20,
+    
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
+  },
 
-
-
-
-
+  avatar: {
+    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  },
+  link: {
+      textDecoration : "none",
+      boxShadow : "none",
+      color : "white"
+  }
+}));
 
 
 
 
 function Post(props){
 
-    const {title, text}  = props;
-   
-
+    const {title, text, userName, userId}  = props;
+    const classes = useStyles();
+    
+    const [expanded, setExpanded] = useState(false);
+    const [liked , setLiked] = useState(false);
+    const handleLike = () => {
+        setLiked(!liked);
+    }
     return(
         <div >
-         <Card sx={{ maxWidth: 345 }}>
+         <Card className={classes.root}>
       <CardHeader
+      avatar={
+        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+         <Link to={{pathname : '/users/' + userId}}>{userName.charAt(0).toUpperCase()}</Link>
+        </Avatar>
+      }
         action={
           <IconButton aria-label="settings">
             <MoreVertIcon />
@@ -50,8 +76,10 @@ function Post(props){
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton
+        onClick={handleLike}
+        aria-label="add to favorites">
+          <FavoriteIcon style={liked? {color : "red"}: null} />
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />

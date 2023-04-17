@@ -5,11 +5,12 @@ import java.util.Optional;
 
 import com.example.questapp.business.requests.CreatePostRequest;
 import com.example.questapp.business.requests.UpdatePostRequest;
+import com.example.questapp.business.responses.GetAllPostResponse;
 import com.example.questapp.entities.Post;
 
 public interface PostService {
 
-	List<Post> getAllPosts(Optional<Long> userId);
+	List<GetAllPostResponse> getAllPosts(Optional<Long> userId);
 
 	Post getOnePostById(Long postId);
 

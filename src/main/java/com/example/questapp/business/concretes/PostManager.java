@@ -2,6 +2,7 @@ package com.example.questapp.business.concretes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import com.example.questapp.business.abstracts.PostService;
 import com.example.questapp.business.abstracts.UserService;
 import com.example.questapp.business.requests.CreatePostRequest;
 import com.example.questapp.business.requests.UpdatePostRequest;
+import com.example.questapp.business.responses.GetAllPostResponse;
 import com.example.questapp.dataAccess.abstracts.PostRepository;
 import com.example.questapp.entities.Post;
 import com.example.questapp.entities.User;
@@ -23,13 +25,14 @@ public class PostManager implements PostService {
 	private final UserService userService;
 
 	@Override
-	public List<Post> getAllPosts(Optional<Long> userId) {
-
+	public List<GetAllPostResponse> getAllPosts(Optional<Long> userId) {
+		List<Post> postList;
 		if (userId.isPresent()) {
-			return postRepository.findByUserId(userId.get());
+			postList =  postRepository.findByUserId(userId.get());
 		}
-
-		return postRepository.findAll();
+		postList = postRepository.findAll();
+		return postList.stream().map(post -> new GetAllPostResponse(post)).collect(Collectors.toList());
+		
 	}
 
 	@Override
@@ -46,7 +49,7 @@ public class PostManager implements PostService {
 			return null;
 
 		Post toSave = new Post();
-		toSave.setId(createPostRequest.getId());
+		
 		toSave.setText(createPostRequest.getText());
 		toSave.setTitle(createPostRequest.getTitle());
 		toSave.setUser(user);

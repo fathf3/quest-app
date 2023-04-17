@@ -1,14 +1,32 @@
 import React, {useState, useEffect} from "react";
 import Post from "../Post/Post";
+import { makeStyles } from "@mui/styles";
+import PostForm from "../Post/PostForm";
+
+
+
+
+const useStyles = makeStyles((theme) => ({
+
+    container:{
+        display : "flex",
+        flexWrap: "wrap",
+        justifyContent : "center",
+        alignItems : "center",
+        
+    }
+
+}));
+
 
 function Home() {
 
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [postList, setPostList] = useState([]);
+    const classes = useStyles();
 
-
-    useEffect(() => {
+    const refreshPosts =() =>{
         fetch("/posts")
             .then(res => res.json())
             .then(
@@ -21,7 +39,12 @@ function Home() {
                     setError(error);
                 }
             )
-    }, [])
+    }
+
+
+    useEffect(() => {
+        refreshPosts()
+    }, [postList])
 
     if (error) {
         return <div> Eror </div>
@@ -31,11 +54,13 @@ function Home() {
     else {
         return (
 
-            <div className="container">
-                Home
+            <div className= {classes.container}>
                 
+                <PostForm userId = {1} userName="fatih"  refreshPosts = {refreshPosts}></PostForm>
                 {postList.map(post => (
-                    <Post title={post.title}  text ={post.text}></Post>
+                    <Post title={post.title}  text ={post.text} 
+                    userId = {post.userId} userName = {post.userName} 
+                    ></Post>
                 ))}
 
             </div>

@@ -34,10 +34,10 @@ public class Post {
 	
 	private String text;
 	
-	@ManyToOne(fetch = FetchType.LAZY) // User objesini direk cekme!
+	@ManyToOne(fetch = FetchType.EAGER) // User objesini direk cekme!
 	@JoinColumn(name = "user_id", nullable = false) //null olamaz
 	@OnDelete(action = OnDeleteAction.CASCADE) // User silinirse postlarda silinsin
-	@JsonIgnore
+	
 	private User user;
 	
 }

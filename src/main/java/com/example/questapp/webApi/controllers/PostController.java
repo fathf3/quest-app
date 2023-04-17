@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.questapp.business.abstracts.PostService;
 import com.example.questapp.business.requests.CreatePostRequest;
 import com.example.questapp.business.requests.UpdatePostRequest;
+import com.example.questapp.business.responses.GetAllPostResponse;
 import com.example.questapp.entities.Post;
 
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class PostController {
 	private final PostService postService;
 	
 	@GetMapping
-	public List<Post> getAllPosts(@RequestParam Optional<Long> userId){
+	public List<GetAllPostResponse> getAllPosts(@RequestParam Optional<Long> userId){
 	
 		
 		return postService.getAllPosts(userId);
