@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import "./Post.scss";
+import clsx from 'clsx';
 
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -12,9 +13,12 @@ import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Avatar } from '@mui/material';
+import { Avatar, Container } from '@mui/material';
 import { red } from '@mui/material/colors';
+
+
 import { Link } from 'react-router-dom';
+import Comment from '../Comment/Comment';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,14 +48,51 @@ const useStyles = makeStyles((theme) => ({
 
 function Post(props){
 
-    const {title, text, userName, userId}  = props;
+    const {title, text, userName, userId , postId}  = props;
     const classes = useStyles();
-    
     const [expanded, setExpanded] = useState(false);
     const [liked , setLiked] = useState(false);
+    const [error, setError] = useState(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [commentList , setCommentList] = useState([]);
+    const isInitialMount = useRef(true);
     const handleLike = () => {
         setLiked(!liked);
     }
+    
+
+    const refreshComments =() =>{
+      console.log(postId)
+      fetch("/api/comments?postId="+postId)
+          .then(res => res.json())
+          .then(
+              (result) => {
+                  setIsLoaded(true);
+                  setCommentList([result]);
+              },
+              (error) => {
+                  setIsLoaded(true);
+                  setError(error);
+              }
+          )
+  }
+
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+    refreshComments();
+    console.log(commentList);
+  };
+
+  useEffect(() => {
+    if(isInitialMount.current)
+      isInitialMount.current = false;
+    else
+      refreshComments();
+}, [commentList])
+
+
+
     return(
         <div >
          <Card className={classes.root}>
@@ -67,7 +108,7 @@ function Post(props){
           </IconButton>
         }
         title={title}
-        subheader="September 14, 2016"
+
       />
       
       <CardContent>
@@ -81,39 +122,25 @@ function Post(props){
         aria-label="add to favorites">
           <FavoriteIcon style={liked? {color : "red"}: null} />
         </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
+        <IconButton
+                    className={clsx(classes.expand, {
+                        [classes.expandOpen]: expanded,
+                    })}
+                    onClick={handleExpandClick}
+                    aria-expanded={expanded}
+                    aria-label="show more"
+                    >
+                    <ShareIcon />
+                    </IconButton>
       
       </CardActions>
-      <Collapse  timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-            aside for 10 minutes.
-          </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-            medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-            occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-            large plate and set aside, leaving chicken and chorizo in the pan. Add
-            pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-            stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is absorbed,
-            15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-            mussels, tucking them down into the rice, and cook again without
-            stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
-          </Typography>
-        </CardContent>
+      <Collapse in={expanded}  timeout="auto" unmountOnExit>
+        <Container fixed className={classes.container}>
+          {error?"error" :
+          isLoaded? commentList.map(comment => (
+            <Comment userId = {1} userName = {"user"} text = {comment.text}></Comment>
+          )) :" Loading" }
+        </Container>
       </Collapse>
     </Card>
         </div>
