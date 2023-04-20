@@ -44,7 +44,9 @@ public class LikeManager implements LikeService{
 			list = likeRepository.findByPostId(postId.get());
 		}else
 			list = likeRepository.findAll();
+	
 		return list.stream().map(like -> new GetAllLikeResponse(like)).collect(Collectors.toList());
+		
 	}
 
 	public Like getOneLikeById(Long LikeId) {
@@ -56,7 +58,7 @@ public class LikeManager implements LikeService{
 		Post post = postService.getOnePostById(request.getPostId());
 		if(user != null && post != null) {
 			Like likeToSave = new Like();
-			likeToSave.setId(request.getId());
+			
 			likeToSave.setPost(post);
 			likeToSave.setUser(user);
 			return likeRepository.save(likeToSave);

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import { makeStyles, styled } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
@@ -19,20 +19,24 @@ import { red } from '@mui/material/colors';
 
 import { Link } from 'react-router-dom';
 import Comment from '../Comment/Comment';
+import CommentForm from '../Comment/CommentForm';
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 800,
     textAlign : "left",
-    margin : 20,
-    
+    margin : 20
   },
   media: {
     height: 0,
     paddingTop: '56.25%', // 16:9
   },
-
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    
+  },
   avatar: {
     background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
   },
@@ -46,55 +50,119 @@ const useStyles = makeStyles((theme) => ({
 
 
 
+
 function Post(props){
 
-    const {title, text, userName, userId , postId}  = props;
+    const {title, text, userName, userId , postId, likes}  = props;
     const classes = useStyles();
     const [expanded, setExpanded] = useState(false);
-    const [liked , setLiked] = useState(false);
     const [error, setError] = useState(null);
+    const [isLiked, setIsLiked] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [commentList , setCommentList] = useState([]);
     const isInitialMount = useRef(true);
-    const handleLike = () => {
-        setLiked(!liked);
-    }
+    const [likeCount, setLikeCount] = useState(likes.length);
+    const [likeId, setLikeId] = useState(null);
+    const [refresh, setRefresh] = useState(false);
+    let disabled = userId == null ? true:false;
+
+    const commentListe = Array.from(commentList);
+
     
+    const setCommentRefresh = () => {
+      setRefresh(true);
+    }
 
-    const refreshComments =() =>{
-      console.log(postId)
-      fetch("/api/comments?postId="+postId)
-          .then(res => res.json())
-          .then(
-              (result) => {
-                  setIsLoaded(true);
-                  setCommentList([result]);
-              },
-              (error) => {
-                  setIsLoaded(true);
-                  setError(error);
-              }
-          )
+
+    const handleExpandClick = () => {
+      setExpanded(!expanded);
+      refreshComments();
+      
+    };
+
+
+    const refreshComments = () => {
+      fetch("/comments?postId="+postId)
+      .then(res => res.json())
+      .then(
+          (result) => {
+            setIsLoaded(true);
+              setCommentList(result)
+          },
+          (error) => {
+              console.log(error)
+              setIsLoaded(true);
+              setError(error);
+          }
+      )
+  
+      setRefresh(false)
+    }
+
+
+
+ 
+
+  const checkLikes = () => {
+    var likeControl = likes.find((like => like.userId === userId));
+    
+    if(likeControl != null){
+      
+      setLikeId(likeControl.id)
+      setIsLiked(true)
+    }
   }
-
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-    refreshComments();
-    console.log(commentList);
-  };
 
   useEffect(() => {
     if(isInitialMount.current)
       isInitialMount.current = false;
     else
       refreshComments();
-}, [commentList])
+}, [refresh])
+
+useEffect(() => {checkLikes()},[])
+
+const saveLike = () => {
+  fetch("/likies",{
+    method : "POST",
+    headers : {
+      "Content-Type" : "application/json"
+    },
+    body : JSON.stringify({
+      postId : postId,
+      userId : userId
+    }),
+  })  
+    .then((res) => res.json())
+    .catch((err) => console.log(err))
+}
+
+const deleteLike = () => {
+  fetch("/likies/"+likeId,{
+    method : "DELETE"
+  })
+    .catch((err) => console.log(err))
+}
+
+const handleLike = () => {
+  setIsLiked(!isLiked);
+  if(!isLiked){
+    saveLike();
+    setLikeCount(likeCount + 1)
+  }
+  else{
+    deleteLike();
+    setLikeCount(likeCount - 1)
+  }
+    
+ }
+
 
 
 
     return(
         <div >
+         
          <Card className={classes.root}>
       <CardHeader
       avatar={
@@ -117,11 +185,22 @@ function Post(props){
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton
-        onClick={handleLike}
-        aria-label="add to favorites">
-          <FavoriteIcon style={liked? {color : "red"}: null} />
-        </IconButton>
+      {disabled ? 
+      <IconButton 
+                    disabled
+                    onClick={handleLike}
+                    aria-label="add to favorites"
+                    >
+                    <FavoriteIcon style={isLiked? { color: "red" } : null} />
+                    </IconButton> :
+                    <IconButton 
+                    onClick={handleLike}
+                    aria-label="add to favorites"
+                    >
+                    <FavoriteIcon style={isLiked? { color: "red" } : null} />
+                    </IconButton>
+                  }
+                    {likeCount}
         <IconButton
                     className={clsx(classes.expand, {
                         [classes.expandOpen]: expanded,
@@ -134,13 +213,19 @@ function Post(props){
                     </IconButton>
       
       </CardActions>
-      <Collapse in={expanded}  timeout="auto" unmountOnExit>
-        <Container fixed className={classes.container}>
-          {error?"error" :
-          isLoaded? commentList.map(comment => (
-            <Comment userId = {1} userName = {"user"} text = {comment.text}></Comment>
-          )) :" Loading" }
+      
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+                    <Container fixed className = {classes.container}>
+                    {error? "error" :
+                    isLoaded? commentListe.map(comment => (
+                      <Comment userId = {comment.userId} userName = {comment.userName} text = {comment.text}></Comment>
+                    )) : "Loading"}
+                    {disabled? "":
+                    <CommentForm postId = {postId} setCommentRefresh={setCommentRefresh} >
+                    </CommentForm>}
         </Container>
+        </CardContent>
       </Collapse>
     </Card>
         </div>

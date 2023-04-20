@@ -1,4 +1,4 @@
-package com.example.questapp.business.responses;
+	package com.example.questapp.business.responses;
 
 import com.example.questapp.entities.Comment;
 
@@ -12,12 +12,14 @@ public class GetAllCommentResponse {
 	String text;
 	Long userId;
 	Long postId;
+	String userName;
 	
 	public GetAllCommentResponse(Comment comment) {
 		this.id = comment.getId();
 		this.text = comment.getText();
 		this.postId = comment.getPost().getId();
 		this.userId = comment.getUser().getId();
+		this.userName = comment.getUser().getUserName();
 		
 	}
 }

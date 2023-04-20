@@ -31,8 +31,7 @@ public class Like {
 	private long id;
 
 	
-	@Column(name = "text", columnDefinition = "text")
-	private String text;
+	 
 	
 	@ManyToOne(fetch = FetchType.LAZY) // User objesini direk cekme!
 	@JoinColumn(name = "user_id", nullable = false) //null olamaz

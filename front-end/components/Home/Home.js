@@ -6,6 +6,10 @@ import PostForm from "../Post/PostForm";
 
 
 
+
+
+
+
 const useStyles = makeStyles((theme) => ({
 
     container:{
@@ -26,6 +30,7 @@ function Home() {
     const [postList, setPostList] = useState([]);
     const classes = useStyles();
 
+
     const refreshPosts =() =>{
         fetch("/posts")
             .then(res => res.json())
@@ -40,7 +45,7 @@ function Home() {
                 }
             )
     }
-
+    
 
     useEffect(() => {
         refreshPosts()
@@ -55,11 +60,13 @@ function Home() {
         return (
 
             <div className= {classes.container}>
-                
+
                 <PostForm userId = {1} userName="fatih"  refreshPosts = {refreshPosts}></PostForm>
+                
                 {postList.map(post => (
-                    <Post postId = {post.id} title={post.title}  text ={post.text} 
+                    <Post likes = {post.postLikes} postId = {post.id} title={post.title}  text ={post.text} 
                     userId = {post.userId} userName = {post.userName} 
+                   
                     ></Post>
                 ))}
 

@@ -4,26 +4,41 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.questapp.business.abstracts.LikeService;
 import com.example.questapp.business.abstracts.PostService;
 import com.example.questapp.business.abstracts.UserService;
 import com.example.questapp.business.requests.CreatePostRequest;
 import com.example.questapp.business.requests.UpdatePostRequest;
+import com.example.questapp.business.responses.GetAllLikeResponse;
 import com.example.questapp.business.responses.GetAllPostResponse;
 import com.example.questapp.dataAccess.abstracts.PostRepository;
+import com.example.questapp.entities.Like;
 import com.example.questapp.entities.Post;
 import com.example.questapp.entities.User;
 
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
+
 public class PostManager implements PostService {
 
 	private final PostRepository postRepository;
 	private final UserService userService;
+	private  LikeService likeService;
 
+	public PostManager(PostRepository postRepository, UserService userService) {
+		this.postRepository = postRepository;
+		this.userService = userService;
+	}
+	
+	@Autowired
+	public void setLikeService(LikeService likeService) {
+		this.likeService = likeService;
+	}
+	
 	@Override
 	public List<GetAllPostResponse> getAllPosts(Optional<Long> userId) {
 		List<Post> postList;
@@ -31,7 +46,9 @@ public class PostManager implements PostService {
 			postList =  postRepository.findByUserId(userId.get());
 		}
 		postList = postRepository.findAll();
-		return postList.stream().map(post -> new GetAllPostResponse(post)).collect(Collectors.toList());
+		return postList.stream().map(post -> {
+			List<GetAllLikeResponse> likes =  likeService.getAllLikesWithParam(Optional.ofNullable(null), Optional.of(post.getId()));
+			return new GetAllPostResponse(post, likes);}).collect(Collectors.toList());
 		
 	}
 
